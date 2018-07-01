@@ -7,7 +7,7 @@ def convert_img(file_data):
     orig = cv2.imdecode(nparr, cv2.IMREAD_COLOR).astype(np.float32)
     height, width, _ = orig.shape
     center_x, center_y = height/2, width/2
-    blur, iterations = 0.007, 25
+    blur, iterations = 0.007, 26
 
     map_x1 = np.fromfunction(
         lambda x, y: x + (x - center_x) * blur, (height, width),
