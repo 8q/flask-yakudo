@@ -4,8 +4,9 @@ import cv2
 
 def convert_img(file_data):
     nparr = np.fromstring(file_data, np.uint8)
-    orig = cv2.imdecode(nparr, cv2.IMREAD_COLOR).astype(np.float32)
-    height, width, _ = orig.shape
+    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR).astype(np.float32)
+    del nparr
+    height, width, _ = img.shape
     center_x, center_y = height/2, width/2
     blur, iterations = 0.0085, 20
 
@@ -22,11 +23,13 @@ def convert_img(file_data):
         lambda x, y: y - (y - center_y) * blur, (height, width),
         dtype=np.float32)
 
-    dst = np.copy(orig)
     for i in range(iterations):
-        enlarged = cv2.remap(dst, map_y1, map_x1, cv2.INTER_LINEAR)
-        shrinked = cv2.remap(dst, map_y2, map_x2, cv2.INTER_LINEAR)
-        dst = cv2.addWeighted(enlarged, 0.5, shrinked, 0.5, 0, dst)
+        enlarged = cv2.remap(img, map_y1, map_x1, cv2.INTER_LINEAR)
+        shrinked = cv2.remap(img, map_y2, map_x2, cv2.INTER_LINEAR)
+        img = cv2.addWeighted(enlarged, 0.5, shrinked, 0.5, 0, img)
+        del enlarged
+        del shrinked
 
-    _, buf = cv2.imencode('.png', dst[15:height-15, 15:width-15])
+    _, buf = cv2.imencode('.png', img[15:height-15, 15:width-15])
+    del img
     return buf.tobytes()
