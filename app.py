@@ -14,8 +14,8 @@ def index():
 def upload():
     try:
         input_data = request.files['file'].read()
+        request.files = None
         output_data = convert_img(input_data)
-        del input_data
         res = make_response()
         res.data = output_data
         res.headers['Content-Disposition'] = 'inline;'

@@ -27,10 +27,6 @@ def convert_img(file_data):
         enlarged = cv2.remap(img, map_y1, map_x1, cv2.INTER_LINEAR)
         shrinked = cv2.remap(img, map_y2, map_x2, cv2.INTER_LINEAR)
         img = cv2.addWeighted(enlarged, 0.5, shrinked, 0.5, 0, img)
-        del enlarged
-        del shrinked
 
-    # _, buf = cv2.imencode('.png', img[15:height-15, 15:width-15])
-    _, buf = cv2.imencode('.png', img)
-    del img
+    _, buf = cv2.imencode('.png', img[15:height-15, 15:width-15])
     return buf.tobytes()
