@@ -30,6 +30,7 @@ def convert_img(file_data):
         del enlarged
         del shrinked
 
-    _, buf = cv2.imencode('.png', img[15:height-15, 15:width-15])
+    # _, buf = cv2.imencode('.png', img[15:height-15, 15:width-15])
+    _, buf = cv2.imencode('.png', img)
     del img
     return buf.tobytes()
