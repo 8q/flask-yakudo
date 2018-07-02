@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+from yakudo_error import YakudoError
 
 
 def convert_img(file_data):
@@ -8,7 +9,7 @@ def convert_img(file_data):
     del nparr
     height, width, _ = img.shape
     if width > 1500 or height > 1500:
-        raise Exception
+        raise YakudoError("File size must be under 1500x1500.")
     center_x, center_y = height/2, width/2
     blur, iterations = 0.0085, 20
 

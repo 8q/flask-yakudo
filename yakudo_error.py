@@ -1,0 +1,2 @@
+class YakudoError(Exception):
+    pass
