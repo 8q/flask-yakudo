@@ -7,6 +7,8 @@ def convert_img(file_data):
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR).astype(np.float32)
     del nparr
     height, width, _ = img.shape
+    if width > 1500 or height > 1500:
+        raise Exception
     center_x, center_y = height/2, width/2
     blur, iterations = 0.0085, 20
 
