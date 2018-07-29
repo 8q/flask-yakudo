@@ -31,7 +31,7 @@
     <br>
     <div class="row">
         <div class="col-12 col-lg-8">
-            <form>
+            <form action="">
                 <input type='file' name='file' id='file-input' style='display:none' accept="image/*">
                 <div class="form-group">
                     <div class="input-group">
@@ -43,7 +43,7 @@
                 </div>
                 <button class="btn btn-primary" id='submit-btn'>送信する</button>
             </form>
-            <canvas id="dummy" style="display: none;"></canvas>
+            <canvas id="dummy" style='display:none'></canvas>
         </div>
     </div>
     <div class="row">
@@ -59,6 +59,7 @@
         crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
         crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='jquery.binarytransport.js') }}"></script>
 
     <script>
         $('#file-input-btn').click(() => {
@@ -96,8 +97,6 @@
                     if(w > 1500 || h > 1500) {
                         [w, h] = w > h ? [1500, (1500 * h / w)] : [(1500 * w / h), 1500];
                     }
-                    console.log(w);
-                    console.log(h);
                     $canvas.attr('width', w);
                     $canvas.attr('height', h);
                     ctx.drawImage(img, 0, 0, w, h);
@@ -116,23 +115,25 @@
         }
 
         $('#submit-btn').click(() => {
-            console.log('OK');
             const $canvas = $('#dummy');
             let blob = canvas2blob($canvas[0]);
             let formData = new FormData();
             formData.append('file', blob, 'upload.jpg');
 
             $.ajax({
+                async: false, 
                 type: 'POST',
                 url: '/upload',
                 data: formData,
-                dataType: 'text',
+                dataType: 'binary',
+                responseType:'blob',
+                processData: false,
                 cache: false,
                 contentType: false,
-                processData: false,
             })
             .done(data => {
-                console.log(data);
+                let blob = new Blob([data], {type: 'image/jpeg'} );
+                window.open(URL.createObjectURL(blob), '_blank');
             });
 
             return false;
