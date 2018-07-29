@@ -13,10 +13,10 @@ def convert_img(file_data):
         raise YakudoError("File size must be under 1000x1000.")
     center_x, center_y = height/2, width/2
     # blur, iterations = 0.0085, 20
-    iterations = 20
+    iterations = 12
 
     def blur():
-        return random.uniform(0.005, 0.010)
+        return random.uniform(0.008, 0.025)
 
     map_x1 = np.fromfunction(
         lambda x, y: np.vectorize(lambda x: np.float32(max(min(x + (x - center_x) * blur(), height-1), 0)))(x),
