@@ -27,7 +27,7 @@ def upload():
         res = make_response()
         res.data = output_data
         res.headers['Content-Disposition'] = 'inline;'
-        res.headers['Content-Type'] = 'image/png'
+        res.headers['Content-Type'] = 'image/jpeg'
         return res
     except YakudoError as e:
         return str(e)

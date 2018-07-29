@@ -31,9 +31,8 @@
     <br>
     <div class="row">
         <div class="col-12 col-lg-8">
-            <form action="/upload" target="_blank" method="post" enctype="multipart/form-data">
-                <input type='file' name="file" id='file-input' style='display:none'>
-                <label>画像サイズは1500x1500まで</label>
+            <form>
+                <input type='file' name='file' id='file-input' style='display:none' accept="image/*">
                 <div class="form-group">
                     <div class="input-group">
                         <div id='file-input-btn' class='input-group-prepend'>
@@ -42,8 +41,9 @@
                         <input id="cover" type="text" class="form-control" readonly="">
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary">送信する</button>
+                <button class="btn btn-primary" id='submit-btn'>送信する</button>
             </form>
+            <canvas id="dummy" style="display: none;"></canvas>
         </div>
     </div>
     <div class="row">
@@ -61,11 +61,81 @@
         crossorigin="anonymous"></script>
 
     <script>
-        $('#file-input-btn').click(function () {
+        $('#file-input-btn').click(() => {
             $('#file-input').click();
         });
-        $('#file-input').change(function () {
-            $('#cover').val($(this).prop('files')[0].name);
+
+        $('#file-input').change(event => {
+            const $input = $(event.target);
+            const file = $input.prop('files')[0];
+            $('#cover').val(file.name);
+
+            Promise.resolve(file)
+                .then(file => {
+                    return new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = event => {
+                            resolve(event.target.result);
+                        }
+                        reader.readAsDataURL(file);
+                    })
+                })
+                .then(imgSrc => {
+                    return new Promise((resolve, reject) => {
+                        const img = new Image();
+                        img.onload = event => {
+                            resolve(event.target);
+                        }
+                        img.src = imgSrc;
+                    })
+                })
+                .then(img => {
+                    const $canvas = $('#dummy');
+                    const ctx = $canvas[0].getContext('2d');
+                    let [w, h] = [img.width, img.height];
+                    if(w > 1500 || h > 1500) {
+                        [w, h] = w > h ? [1500, (1500 * h / w)] : [(1500 * w / h), 1500];
+                    }
+                    console.log(w);
+                    console.log(h);
+                    $canvas.attr('width', w);
+                    $canvas.attr('height', h);
+                    ctx.drawImage(img, 0, 0, w, h);
+                });
+        });
+
+        function canvas2blob(canvas) {
+            var type = 'image/jpeg';
+            var bin = window.atob(canvas.toDataURL(type).split(',')[1]);
+            var buffer = new Uint8Array(bin.length);
+            for (var i = 0; i < bin.length; i++) {
+                buffer[i] = bin.charCodeAt(i);
+            }
+            var blob = new Blob([buffer.buffer], {type: type} );
+            return blob
+        }
+
+        $('#submit-btn').click(() => {
+            console.log('OK');
+            const $canvas = $('#dummy');
+            let blob = canvas2blob($canvas[0]);
+            let formData = new FormData();
+            formData.append('file', blob, 'upload.jpg');
+
+            $.ajax({
+                type: 'POST',
+                url: '/upload',
+                data: formData,
+                dataType: 'text',
+                cache: false,
+                contentType: false,
+                processData: false,
+            })
+            .done(data => {
+                console.log(data);
+            });
+
+            return false;
         });
     </script>
 </body>
