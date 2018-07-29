@@ -94,8 +94,8 @@
                     const $canvas = $('#dummy');
                     const ctx = $canvas[0].getContext('2d');
                     let [w, h] = [img.width, img.height];
-                    if (w > 1500 || h > 1500) {
-                        [w, h] = w > h ? [1500, (1500 * h / w)] : [(1500 * w / h), 1500];
+                    if (w > 1000 || h > 1000) {
+                        [w, h] = w > h ? [1000, (1000 * h / w)] : [(1000 * w / h), 1000];
                     }
                     $canvas.attr('width', w);
                     $canvas.attr('height', h);
