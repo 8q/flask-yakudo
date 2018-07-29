@@ -94,7 +94,7 @@
                     const $canvas = $('#dummy');
                     const ctx = $canvas[0].getContext('2d');
                     let [w, h] = [img.width, img.height];
-                    if(w > 1500 || h > 1500) {
+                    if (w > 1500 || h > 1500) {
                         [w, h] = w > h ? [1500, (1500 * h / w)] : [(1500 * w / h), 1500];
                     }
                     $canvas.attr('width', w);
@@ -110,30 +110,45 @@
             for (var i = 0; i < bin.length; i++) {
                 buffer[i] = bin.charCodeAt(i);
             }
-            var blob = new Blob([buffer.buffer], {type: type} );
+            var blob = new Blob([buffer.buffer], { type: type });
             return blob
         }
 
         $('#submit-btn').click(() => {
             const $canvas = $('#dummy');
-            let blob = canvas2blob($canvas[0]);
-            let formData = new FormData();
+            const blob = canvas2blob($canvas[0]);
+            const formData = new FormData();
             formData.append('file', blob, 'upload.jpg');
+            const win = window.open("");
+			win.document.body.innerHTML = "loading...";
 
             $.ajax({
-                async: false, 
+                async: false,
                 type: 'POST',
                 url: '/upload',
                 data: formData,
                 dataType: 'binary',
-                responseType:'blob',
+                responseType: 'blob',
                 processData: false,
-                cache: false,
                 contentType: false,
             })
             .done(data => {
-                let blob = new Blob([data], {type: 'image/jpeg'} );
-                window.open(URL.createObjectURL(blob), '_blank');
+                const blob = new Blob([data], {type: 'image/jpeg'});
+                Promise.resolve(blob)
+                    .then(blob => {
+                        return new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = event => {
+                                resolve(event.target.result);
+                            }
+                            reader.readAsDataURL(blob);
+                        });
+                    })
+                    .then(uri => {
+                        const image = new Image();
+                        image.src = uri;
+                        win.document.write(image.outerHTML);
+                    });
             });
 
             return false;
