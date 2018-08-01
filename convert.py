@@ -9,26 +9,29 @@ def convert_img(file_data):
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR).astype(np.float32)
     del nparr
     height, width, _ = img.shape
-    if width > 1000 or height > 1000:
-        raise YakudoError("File size must be under 1000x1000.")
+    if width > 1280 or height > 1280:
+        raise YakudoError("File size must be under 1280x1280.")
     center_x, center_y = height/2, width/2
-    # blur, iterations = 0.0085, 20
-    iterations = 12
+    iterations = 10
 
     def blur():
-        return random.uniform(0.008, 0.025)
+        return random.uniform(0.005, 0.02)
 
     map_x1 = np.fromfunction(
-        lambda x, y: np.vectorize(lambda x: np.float32(max(min(x + (x - center_x) * blur(), height-1), 0)))(x),
+        lambda x, y: np.vectorize(lambda x: np.float32(
+            max(min(x + (x - center_x) * blur(), height-1), 0)))(x),
         (height, width), dtype=np.float32)
     map_y1 = np.fromfunction(
-        lambda x, y: np.vectorize(lambda y: np.float32(max(min(y + (y - center_y) * blur(), width-1), 0)))(y),
+        lambda x, y: np.vectorize(lambda y: np.float32(
+            max(min(y + (y - center_y) * blur(), width-1), 0)))(y),
         (height, width), dtype=np.float32)
     map_x2 = np.fromfunction(
-        lambda x, y: np.vectorize(lambda x: np.float32(max(min(x - (x - center_x) * blur(), height-1), 0)))(x),
+        lambda x, y: np.vectorize(lambda x: np.float32(
+            max(min(x - (x - center_x) * blur(), height-1), 0)))(x),
         (height, width), dtype=np.float32)
     map_y2 = np.fromfunction(
-        lambda x, y: np.vectorize(lambda y: np.float32(max(min(y - (y - center_y) * blur(), width-1), 0)))(y),
+        lambda x, y: np.vectorize(lambda y: np.float32(
+            max(min(y - (y - center_y) * blur(), width-1), 0)))(y),
         (height, width), dtype=np.float32)
 
     for i in range(iterations):

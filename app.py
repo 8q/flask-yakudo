@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, abort, make_response
 from convert import convert_img
 from yakudo_error import YakudoError
 
-app = Flask(__name__, static_url_path='/static')
+app = Flask(__name__)
 
 
 def allowed_file(filename):
@@ -13,7 +13,7 @@ def allowed_file(filename):
 @app.route("/")
 @app.route("/index")
 def index():
-    return render_template('index.html', title='yakudo')
+    return render_template('index.html')
 
 
 @app.route("/upload", methods=['POST'])
