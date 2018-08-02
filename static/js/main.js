@@ -30,8 +30,8 @@ $('#file-input').change(event => {
             const $canvas = $('#dummy');
             const ctx = $canvas[0].getContext('2d');
             let [w, h] = [img.width, img.height];
-            if (w > 1280 || h > 1280) {
-                [w, h] = w > h ? [1280, (1280 * h / w)] : [(1280 * w / h), 1280];
+            if (w > 1000 || h > 1000) {
+                [w, h] = w > h ? [1000, (1000 * h / w)] : [(1000 * w / h), 1000];
             }
             $canvas.attr('width', w);
             $canvas.attr('height', h);

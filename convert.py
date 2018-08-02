@@ -9,13 +9,13 @@ def convert_img(file_data):
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR).astype(np.float32)
     del nparr
     height, width, _ = img.shape
-    if width > 1280 or height > 1280:
-        raise YakudoError("File size must be under 1280x1280.")
+    if width > 1000 or height > 1000:
+        raise YakudoError("File size must be under 1000x1000.")
     center_x, center_y = height/2, width/2
     iterations = 10
 
     def blur():
-        return random.uniform(0.005, 0.02)
+        return random.uniform(0.008, 0.022)
 
     map_x1 = np.fromfunction(
         lambda x, y: np.vectorize(lambda x: np.float32(
